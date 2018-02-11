@@ -45,14 +45,15 @@ prop_rVec = property $ do
     case fromJust $ someNatVal (fromIntegral (length xs)) of
       SomeNat (Proxy :: Proxy n) ->
         tripping (H.vector @n xs)
-                 ((* 2) . H.rVec)
+                 (VS.map (* 2) . H.rVec)
                  (Identity . (/ 2) . H.vecR)
 
 prop_vecR :: Property
 prop_vecR = property $ do
     xs <- forAll $ Gen.list (Range.constant 5 10) genDouble
     VS.withSizedList xs $ \v ->
-      tripping v ((* 2) . H.vecR) (Identity . (/ 2) . H.rVec)
+      tripping v ((* 2) . H.vecR)
+                 (Identity . VS.map (/ 2) . H.rVec)
 
 prop_cVec :: Property
 prop_cVec = property $ do
@@ -60,14 +61,15 @@ prop_cVec = property $ do
     case fromJust $ someNatVal (fromIntegral (length xs)) of
       SomeNat (Proxy :: Proxy n) ->
         tripping (fromJust . H.create $ HU.fromList xs)
-                 ((* 2) . H.cVec @n)
+                 (VS.map (* 2) . H.cVec @n)
                  (Identity . (/ 2) . H.vecC)
 
 prop_vecC :: Property
 prop_vecC = property $ do
     xs <- forAll $ Gen.list (Range.constant 5 10) genComplex
     VS.withSizedList xs $ \v ->
-      tripping v ((* 2) . H.vecC) (Identity . (/ 2) . H.cVec)
+      tripping v ((* 2) . H.vecC)
+                 (Identity . VS.map (/ 2) . H.cVec)
 
 genMatList :: Gen a -> Gen (SomeNat, SomeNat, [[a]])
 genMatList g = do
@@ -86,7 +88,7 @@ prop_lRows = property $ do
      , xs
      ) <- forAll $ genMatList genDouble
     tripping (fromJust . H.create $ HU.fromLists xs)
-             ((* 2) . H.lRows @m @n)
+             (V.map (* 2) . H.lRows @m @n)
              (Identity . (/ 2) . H.rowsL)
 
 prop_rowsL :: Property
@@ -95,7 +97,7 @@ prop_rowsL = property $ do
     V.withSizedList xs $ \(v :: V.Vector m [Double]) ->
       tripping (V.map (fromJust . H.create . HU.fromList) v)
                ((* 2) . H.rowsL @m @n)
-               (Identity . (/ 2) . H.lRows)
+               (Identity . V.map (/ 2) . H.lRows)
 
 prop_lCols :: Property
 prop_lCols = property $ do
@@ -104,7 +106,7 @@ prop_lCols = property $ do
      , xs
      ) <- forAll $ genMatList genDouble
     tripping (fromJust . H.create $ HU.fromLists xs)
-             ((* 2) . H.lCols @m @n)
+             (V.map (* 2) . H.lCols @m @n)
              (Identity . (/ 2) . H.colsL)
 
 prop_colsL :: Property
@@ -113,7 +115,7 @@ prop_colsL = property $ do
     V.withSizedList xs $ \(v :: V.Vector n [Double]) ->
       tripping (V.map (fromJust . H.create . HU.fromList) v)
                ((* 2) . H.colsL @m @n)
-               (Identity . (/ 2) . H.lCols)
+               (Identity . V.map (/ 2) . H.lCols)
 
 prop_mRows :: Property
 prop_mRows = property $ do
@@ -122,7 +124,7 @@ prop_mRows = property $ do
      , xs
      ) <- forAll $ genMatList genComplex
     tripping (fromJust . H.create $ HU.fromLists xs)
-             ((* 2) . H.mRows @m @n)
+             (V.map (* 2) . H.mRows @m @n)
              (Identity . (/ 2) . H.rowsM)
 
 prop_rowsM :: Property
@@ -131,7 +133,7 @@ prop_rowsM = property $ do
     V.withSizedList xs $ \(v :: V.Vector m [Complex Double]) ->
       tripping (V.map (fromJust . H.create . HU.fromList) v)
                ((* 2) . H.rowsM @m @n)
-               (Identity . (/ 2) . H.mRows)
+               (Identity . V.map (/ 2) . H.mRows)
 
 prop_mCols :: Property
 prop_mCols = property $ do
@@ -140,7 +142,7 @@ prop_mCols = property $ do
      , xs
      ) <- forAll $ genMatList genComplex
     tripping (fromJust . H.create $ HU.fromLists xs)
-             ((* 2) . H.mCols @m @n)
+             (V.map (* 2) . H.mCols @m @n)
              (Identity . (/ 2) . H.colsM)
 
 prop_colsM :: Property
@@ -149,7 +151,7 @@ prop_colsM = property $ do
     V.withSizedList xs $ \(v :: V.Vector n [Complex Double]) ->
       tripping (V.map (fromJust . H.create . HU.fromList) v)
                ((* 2) . H.colsM @m @n)
-               (Identity . (/ 2) . H.mCols)
+               (Identity . V.map (/ 2) . H.mCols)
 
 main :: IO ()
 main = do

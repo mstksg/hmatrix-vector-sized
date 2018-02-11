@@ -15,7 +15,8 @@
 -- This module is intentionally minimal, exporting only functions that
 -- cannot be written without "unsafe" operations.  With these, however, you
 -- can easily write other useful combinators by using type-safe operations
--- like 'fmap', 'VS.map', 'liftA2', etc.
+-- like 'fmap', 'VS.map', 'liftA2', 'Data.Vector.Generic.Sized.convert',
+-- etc.
 --
 
 module Numeric.LinearAlgebra.Static.Vector (
