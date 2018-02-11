@@ -12,12 +12,67 @@
 @package hmatrix-vector-sized
 @version 0.1.0.0
 
+
+-- | Conversions between statically sized types in
+--   <a>Numeric.LinearAlgebra.Static</a> from <i>hmatrix</i> and
+--   <i>vector-sized</i>.
+--   
+--   This module is intentionally minimal, exporting only functions that
+--   cannot be written without "unsafe" operations. With these, however,
+--   you can easily write other useful combinators by using type-safe
+--   operations like <a>fmap</a>, <a>map</a>, <tt>liftA2</tt>, etc.
 module Numeric.LinearAlgebra.Static.Vector
-rVec :: KnownNat n => R n -> Vector n ℝ
-vecR :: KnownNat n => Vector n ℝ -> R n
-cVec :: KnownNat n => C n -> Vector n ℂ
-vecC :: KnownNat n => Vector n ℂ -> C n
-lRows :: (KnownNat m, KnownNat n) => L m n -> Vector m (R n)
-rowsL :: (KnownNat m, KnownNat n) => Vector m (R n) -> L m n
-lCols :: (KnownNat m, KnownNat n) => L m n -> Vector n (R m)
-colsL :: (KnownNat m, KnownNat n) => Vector n (R m) -> L m n
+
+-- | Convert an <i>hmatrix</i> vector (parameterized by its lenth) to a
+--   <i>vector-sized</i> storable vector of <a>Double</a>s.
+rVec :: R n -> Vector n ℝ
+
+-- | Convert a <i>vector-sized</i> storable vector to an <i>hmatrix</i>
+--   vector (parameterized by its lenth).
+vecR :: Vector n ℝ -> R n
+
+-- | Convert an <i>hmatrix</i> complex vector (parameterized by its lenth)
+--   to a <i>vector-sized</i> storable vector of 'Complex Double's,
+--   preserving the length in the type.
+cVec :: C n -> Vector n ℂ
+
+-- | Convert a <i>vector-sized</i> storable vector to an <i>hmatrix</i>
+--   complex vector (parameterized by its lenth), preserving the length in
+--   the type.
+vecC :: Vector n ℂ -> C n
+
+-- | Split an <i>hmatrix</i> matrix (parameterized by its dimensions) to a
+--   <i>vector-sized</i> boxed vector of its rows (as <i>hmatrix</i>
+--   vectors).
+lRows :: forall m n. () => L m n -> Vector m (R n)
+
+-- | Join together a <i>vector-sized</i> boxed vector of <i>hmatrix</i>
+--   vectors to an <i>hmatrix</i> matrix as its rows.
+rowsL :: forall m n. () => Vector m (R n) -> L m n
+
+-- | Split an <i>hmatrix</i> matrix (parameterized by its dimensions) to a
+--   <i>vector-sized</i> boxed vector of its columns (as <i>hmatrix</i>
+--   vectors).
+lCols :: forall m n. () => L m n -> Vector n (R m)
+
+-- | Join together a <i>vector-sized</i> boxed vector of <i>hmatrix</i>
+--   vectors to an <i>hmatrix</i> matrix as its columns.
+colsL :: forall m n. () => Vector n (R m) -> L m n
+
+-- | Split an <i>hmatrix</i> complex matrix (parameterized by its
+--   dimensions) to a <i>vector-sized</i> boxed vector of its rows (as
+--   <i>hmatrix</i> complex vectors).
+mRows :: forall m n. () => M m n -> Vector m (C n)
+
+-- | Join together a <i>vector-sized</i> boxed vector of <i>hmatrix</i>
+--   complex vectors to an <i>hmatrix</i> complex matrix as its rows.
+rowsM :: forall m n. () => Vector m (C n) -> M m n
+
+-- | Split an <i>hmatrix</i> complex matrix (parameterized by its
+--   dimensions) to a <i>vector-sized</i> boxed vector of its columns (as
+--   <i>hmatrix</i> complex vectors).
+mCols :: forall m n. () => M m n -> Vector n (C m)
+
+-- | Join together a <i>vector-sized</i> boxed vector of <i>hmatrix</i>
+--   complex vectors to an <i>hmatrix</i> complex matrix as its columns.
+colsM :: forall m n. () => Vector n (C m) -> M m n
