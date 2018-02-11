@@ -20,7 +20,8 @@
 --   This module is intentionally minimal, exporting only functions that
 --   cannot be written without "unsafe" operations. With these, however,
 --   you can easily write other useful combinators by using type-safe
---   operations like <a>fmap</a>, <a>map</a>, <tt>liftA2</tt>, etc.
+--   operations like <a>fmap</a>, <a>map</a>, <tt>liftA2</tt>,
+--   <a>convert</a>, etc.
 module Numeric.LinearAlgebra.Static.Vector
 
 -- | Convert an <i>hmatrix</i> vector (parameterized by its lenth) to a
