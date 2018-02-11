@@ -1,7 +1,7 @@
 {-# LANGUAGE ScopedTypeVariables #-}
 
 -- |
--- Module      : Numeric.LinearAgelbra.Static.Vector
+-- Module      : Numeric.LinearAlgebra.Static.Vector
 -- Copyright   : (c) Justin Le 2018
 -- License     : BSD3
 --
@@ -14,7 +14,7 @@
 --
 -- This module is intentionally minimal, exporting only functions that
 -- cannot be written without "unsafe" operations.  With these, however, you
--- can easy write other useful combinators by using type-safe operations
+-- can easily write other useful combinators by using type-safe operations
 -- like 'fmap', 'VS.map', 'liftA2', etc.
 --
 
