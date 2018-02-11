@@ -30,8 +30,8 @@ ghc-options:
 
 dependencies:
 - base >= 4.7 && < 5
-- hmatrix
-- vector-sized
+- hmatrix >= 0.18
+- vector-sized >= 0.4.1
 - vector
 
 library:
