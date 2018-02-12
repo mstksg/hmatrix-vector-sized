@@ -10,7 +10,7 @@
 --   See README on Github
 --   <a>https://github.com/mstksg/hmatrix-vector-sized#readme</a>
 @package hmatrix-vector-sized
-@version 0.1.0.0
+@version 0.1.1.0
 
 
 -- | Conversions between statically sized types in
@@ -60,6 +60,14 @@ lCols :: forall m n. () => L m n -> Vector n (R m)
 --   vectors to an <i>hmatrix</i> matrix as its columns.
 colsL :: forall m n. () => Vector n (R m) -> L m n
 
+-- | Flatten an <i>hmatrix</i> matrix into a <i>vector-sized</i> storable
+--   vector of its items.
+lVec :: forall m n. () => L m n -> Vector (m * n) ℝ
+
+-- | Shape a <i>vector-sized</i> storable vector of elements into an
+--   <i>hmatrix</i> matrix.
+vecL :: forall m n. KnownNat n => Vector (m * n) ℝ -> L m n
+
 -- | Split an <i>hmatrix</i> complex matrix (parameterized by its
 --   dimensions) to a <i>vector-sized</i> boxed vector of its rows (as
 --   <i>hmatrix</i> complex vectors).
@@ -77,3 +85,11 @@ mCols :: forall m n. () => M m n -> Vector n (C m)
 -- | Join together a <i>vector-sized</i> boxed vector of <i>hmatrix</i>
 --   complex vectors to an <i>hmatrix</i> complex matrix as its columns.
 colsM :: forall m n. () => Vector n (C m) -> M m n
+
+-- | Flatten an <i>hmatrix</i> complex matrix into a <i>vector-sized</i>
+--   storable vector of its items.
+mVec :: forall m n. () => M m n -> Vector (m * n) ℂ
+
+-- | Shape a <i>vector-sized</i> storable vector of elements into an
+--   <i>hmatrix</i> complex matrix.
+vecM :: forall m n. KnownNat n => Vector (m * n) ℂ -> M m n
