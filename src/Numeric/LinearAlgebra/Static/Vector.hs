@@ -1,4 +1,6 @@
 {-# LANGUAGE ScopedTypeVariables #-}
+{-# LANGUAGE TypeApplications    #-}
+{-# LANGUAGE TypeOperators       #-}
 
 -- |
 -- Module      : Numeric.LinearAlgebra.Static.Vector
@@ -33,14 +35,20 @@ module Numeric.LinearAlgebra.Static.Vector (
   , rowsL
   , lCols
   , colsL
+  , lVec
+  , vecL
   -- ** Complex
   , mRows
   , rowsM
   , mCols
   , colsM
+  , mVec
+  , vecM
   ) where
 
 import           Data.Foldable
+import           Data.Proxy
+import           GHC.TypeLits
 import           Unsafe.Coerce
 import qualified Data.Vector                  as UV
 import qualified Data.Vector.Sized            as V
@@ -158,3 +166,36 @@ colsM = (unsafeCoerce :: HU.Matrix H.ℂ -> H.M m n)
       . HU.fromColumns
       . map (unsafeCoerce :: H.C m -> HU.Vector H.ℂ)
       . toList
+
+vecL
+    :: forall m n. KnownNat n
+    => VS.Vector (m * n) H.ℝ
+    -> H.L m n
+vecL = (unsafeCoerce :: HU.Matrix H.ℝ -> H.L m n)
+     . HU.reshape (fromIntegral (natVal (Proxy @n)))
+     . unsafeCoerce
+
+lVec
+    :: forall m n. ()
+    => H.L m n
+    -> VS.Vector (m * n) H.ℝ
+lVec = unsafeCoerce
+     . HU.flatten
+     . (unsafeCoerce :: H.L m n -> HU.Matrix H.ℝ)
+
+vecM
+    :: forall m n. KnownNat n
+    => VS.Vector (m * n) H.ℂ
+    -> H.M m n
+vecM = (unsafeCoerce :: HU.Matrix H.ℂ -> H.M m n)
+     . HU.reshape (fromIntegral (natVal (Proxy @n)))
+     . unsafeCoerce
+
+mVec
+    :: forall m n. ()
+    => H.M m n
+    -> VS.Vector (m * n) H.ℂ
+mVec = unsafeCoerce
+     . HU.flatten
+     . (unsafeCoerce :: H.M m n -> HU.Matrix H.ℂ)
+

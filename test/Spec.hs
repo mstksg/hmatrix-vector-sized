@@ -1,7 +1,9 @@
-{-# LANGUAGE ScopedTypeVariables  #-}
-{-# LANGUAGE TemplateHaskell      #-}
-{-# LANGUAGE TypeApplications     #-}
-{-# OPTIONS_GHC -fno-warn-orphans #-}
+{-# LANGUAGE ScopedTypeVariables                      #-}
+{-# LANGUAGE TemplateHaskell                          #-}
+{-# LANGUAGE TypeApplications                         #-}
+{-# LANGUAGE TypeOperators                            #-}
+{-# OPTIONS_GHC -fno-warn-orphans                     #-}
+{-# OPTIONS_GHC -fplugin GHC.TypeLits.KnownNat.Solver #-}
 
 import           Control.Monad
 import           Data.Complex
@@ -117,6 +119,31 @@ prop_colsL = property $ do
                ((* 2) . H.colsL @m @n)
                (Identity . V.map (/ 2) . H.lCols)
 
+prop_vecL :: Property
+prop_vecL = property $ do
+    ( SomeNat (Proxy :: Proxy m)
+     , SomeNat (Proxy :: Proxy n)
+     , xs
+     ) <- forAll $ genMatList genDouble
+    let v :: VS.Vector (m * n) Double
+        v = fromJust $ VS.fromList @_ @(m * n) (concat xs)
+    tripping v ((* 2) . H.vecL @m @n)
+              (Identity . VS.map (/ 2) . H.lVec)
+
+prop_lVec :: Property
+prop_lVec = property $ do
+    ( SomeNat (pM@Proxy :: Proxy m)
+     , SomeNat (pN@Proxy :: Proxy n)
+     , xs
+     ) <- forAll $ genMatList genDouble
+    let m :: H.L m n
+        m = fromJust
+          . H.create
+          . (fromIntegral (natVal pM) HU.>< fromIntegral (natVal pN))
+          $ concat xs
+    tripping m (VS.map (* 2) . H.lVec)
+              (Identity . (/ 2) . H.vecL)
+
 prop_mRows :: Property
 prop_mRows = property $ do
     ( SomeNat (Proxy :: Proxy m)
@@ -152,6 +179,32 @@ prop_colsM = property $ do
       tripping (V.map (fromJust . H.create . HU.fromList) v)
                ((* 2) . H.colsM @m @n)
                (Identity . V.map (/ 2) . H.mCols)
+
+prop_vecM :: Property
+prop_vecM = property $ do
+    ( SomeNat (Proxy :: Proxy m)
+     , SomeNat (Proxy :: Proxy n)
+     , xs
+     ) <- forAll $ genMatList genComplex
+    let v :: VS.Vector (m * n) (Complex Double)
+        v = fromJust $ VS.fromList @_ @(m * n) (concat xs)
+    tripping v ((* 2) . H.vecM @m @n)
+              (Identity . VS.map (/ 2) . H.mVec)
+
+prop_mVec :: Property
+prop_mVec = property $ do
+    ( SomeNat (pM@Proxy :: Proxy m)
+     , SomeNat (pN@Proxy :: Proxy n)
+     , xs
+     ) <- forAll $ genMatList genComplex
+    let m :: H.M m n
+        m = fromJust
+          . H.create
+          . (fromIntegral (natVal pM) HU.>< fromIntegral (natVal pN))
+          $ concat xs
+    tripping m (VS.map (* 2) . H.mVec)
+               (Identity . (/ 2) . H.vecM)
+
 
 main :: IO ()
 main = do
