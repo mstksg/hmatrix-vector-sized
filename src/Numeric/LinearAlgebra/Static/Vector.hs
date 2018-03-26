@@ -169,6 +169,8 @@ colsM = (unsafeCoerce :: HU.Matrix H.ℂ -> H.M m n)
 
 -- | Shape a /vector-sized/ storable vector of elements into an /hmatrix/
 -- matrix.
+--
+-- @since 0.1.1.0
 vecL
     :: forall m n. KnownNat n
     => VS.Vector (m * n) H.ℝ
@@ -179,6 +181,8 @@ vecL = (unsafeCoerce :: HU.Matrix H.ℝ -> H.L m n)
 
 -- | Flatten an /hmatrix/ matrix into a /vector-sized/ storable vector of
 -- its items.
+--
+-- @since 0.1.1.0
 lVec
     :: forall m n. ()
     => H.L m n
@@ -189,6 +193,8 @@ lVec = unsafeCoerce
 
 -- | Shape a /vector-sized/ storable vector of elements into an /hmatrix/
 -- complex matrix.
+--
+-- @since 0.1.1.0
 vecM
     :: forall m n. KnownNat n
     => VS.Vector (m * n) H.ℂ
@@ -199,6 +205,8 @@ vecM = (unsafeCoerce :: HU.Matrix H.ℂ -> H.M m n)
 
 -- | Flatten an /hmatrix/ complex matrix into a /vector-sized/ storable
 -- vector of its items.
+--
+-- @since 0.1.1.0
 mVec
     :: forall m n. ()
     => H.M m n
