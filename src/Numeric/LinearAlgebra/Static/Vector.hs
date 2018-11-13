@@ -1,6 +1,11 @@
+{-# LANGUAGE CPP                 #-}
 {-# LANGUAGE ScopedTypeVariables #-}
 {-# LANGUAGE TypeApplications    #-}
 {-# LANGUAGE TypeOperators       #-}
+
+#if MIN_VERSION_base(4,12,0)
+{-# LANGUAGE NoStarIsType         #-}
+#endif
 
 -- |
 -- Module      : Numeric.LinearAlgebra.Static.Vector
