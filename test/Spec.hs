@@ -1,9 +1,14 @@
+{-# LANGUAGE CPP                                      #-}
 {-# LANGUAGE ScopedTypeVariables                      #-}
 {-# LANGUAGE TemplateHaskell                          #-}
 {-# LANGUAGE TypeApplications                         #-}
 {-# LANGUAGE TypeOperators                            #-}
 {-# OPTIONS_GHC -fno-warn-orphans                     #-}
 {-# OPTIONS_GHC -fplugin GHC.TypeLits.KnownNat.Solver #-}
+
+#if MIN_VERSION_base(4,12,0)
+{-# LANGUAGE NoStarIsType         #-}
+#endif
 
 import           Control.Monad
 import           Data.Complex
