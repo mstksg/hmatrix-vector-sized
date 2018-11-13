@@ -10,7 +10,7 @@
 --   See README on Github
 --   <a>https://github.com/mstksg/hmatrix-vector-sized#readme</a>
 @package hmatrix-vector-sized
-@version 0.1.1.0
+@version 0.1.1.1
 
 
 -- | Conversions between statically sized types in
