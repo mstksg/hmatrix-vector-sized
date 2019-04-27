@@ -14,6 +14,10 @@ Version 0.1.1.x
     
     Fix tests building on GHC 8.6.
 
+*   <https://github.com/mstksg/hmatrix-vector-sized/releases/tag/v0.1.1.3>
+    
+    Optimization for matrix converters.
+
 Version 0.1.1.0
 ---------------
 

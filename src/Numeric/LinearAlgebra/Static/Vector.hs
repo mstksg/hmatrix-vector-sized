@@ -101,7 +101,7 @@ rowsL
     -> H.L m n
 rowsL = (unsafeCoerce :: HU.Matrix Double -> H.L m n)
       . HU.fromRows
-      . map (unsafeCoerce :: H.R n -> HU.Vector Double)
+      . (unsafeCoerce :: [H.R n] -> [HU.Vector Double])
       . toList
 
 -- | Split an /hmatrix/ matrix (parameterized by its dimensions) to
@@ -123,7 +123,7 @@ colsL
     -> H.L m n
 colsL = (unsafeCoerce :: HU.Matrix Double -> H.L m n)
       . HU.fromColumns
-      . map (unsafeCoerce :: H.R m -> HU.Vector Double)
+      . (unsafeCoerce :: [H.R m] -> [HU.Vector Double])
       . toList
 
 -- | Split an /hmatrix/ complex matrix (parameterized by its dimensions) to
@@ -146,7 +146,7 @@ rowsM
     -> H.M m n
 rowsM = (unsafeCoerce :: HU.Matrix H.ℂ -> H.M m n)
       . HU.fromRows
-      . map (unsafeCoerce :: H.C n -> HU.Vector H.ℂ)
+      . (unsafeCoerce :: [H.C n] -> [HU.Vector H.ℂ])
       . toList
 
 -- | Split an /hmatrix/ complex matrix (parameterized by its dimensions) to
@@ -169,7 +169,7 @@ colsM
     -> H.M m n
 colsM = (unsafeCoerce :: HU.Matrix H.ℂ -> H.M m n)
       . HU.fromColumns
-      . map (unsafeCoerce :: H.C m -> HU.Vector H.ℂ)
+      . (unsafeCoerce :: [H.C m] -> [HU.Vector H.ℂ])
       . toList
 
 -- | Shape a /vector-sized/ storable vector of elements into an /hmatrix/
