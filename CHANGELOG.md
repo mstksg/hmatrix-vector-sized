@@ -7,15 +7,15 @@ Version 0.1.1.x
 *Nov 13, 2018*
 
 *   <https://github.com/mstksg/hmatrix-vector-sized/releases/tag/v0.1.1.1>
-    
+
     Fix building on GHC 8.6.
 
 *   <https://github.com/mstksg/hmatrix-vector-sized/releases/tag/v0.1.1.2>
-    
+
     Fix tests building on GHC 8.6.
 
 *   <https://github.com/mstksg/hmatrix-vector-sized/releases/tag/v0.1.1.3>
-    
+
     Optimization for matrix converters.
 
 Version 0.1.1.0
