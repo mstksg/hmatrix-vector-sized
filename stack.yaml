@@ -44,6 +44,11 @@ extra-deps:
 - finite-typelits-0.1.4.2
 - indexed-list-literals-0.2.1.2
 
+build:
+  haddock-arguments:
+    haddock-args:
+    - --optghc=-fdefer-type-errors
+
 # Override default flag values for local packages and extra-deps
 # flags: {}
 
