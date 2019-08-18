@@ -1,6 +1,18 @@
 Changelog
 =========
 
+Version 0.1.2.0
+---------------
+
+*August 17, 2019*
+
+<https://github.com/mstksg/hmatrix-vector-sized/releases/tag/v0.1.2.0>
+
+*   Fixed bugs that would occur if ever converting anything that contained an
+    hmatrix vector or matrix that was created using `konst`.  This does change
+    the API slightly in a potentially breaking way, as some functions now
+    require `KnownNat` constraints.
+
 Version 0.1.1.x
 ---------------
 

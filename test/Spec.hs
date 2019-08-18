@@ -232,7 +232,11 @@ prop_lVec_konst = property $ do
      , SomeNat (Proxy :: Proxy n)
      , x
      ) <- forAll $ genMatKonst genDouble
-    validVector . H.lVec @m @n $ H.konst x
+    let xs = H.konst x
+    validVector $ H.lVec @m @n xs
+    tripping xs
+        (VS.map (* 2) . H.lVec @m @n)
+        (Identity . (/ 2) . H.vecL)
 
 prop_mRows :: Property
 prop_mRows = property $ do
@@ -341,7 +345,11 @@ prop_mVec_konst = property $ do
      , SomeNat (Proxy :: Proxy n)
      , x
      ) <- forAll $ genMatKonst genComplex
-    validVector . H.mVec @m @n $ H.konst x
+    let xs = H.konst x
+    validVector $ H.mVec @m @n xs
+    tripping xs
+        (VS.map (* 2) . H.mVec @m @n)
+        (Identity . (/ 2) . H.vecM)
 
 
 main :: IO ()
