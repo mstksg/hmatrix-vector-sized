@@ -10,7 +10,7 @@
 --   See README on Github
 --   <a>https://github.com/mstksg/hmatrix-vector-sized#readme</a>
 @package hmatrix-vector-sized
-@version 0.1.1.2
+@version 0.1.2.0
 
 
 -- | Conversions between statically sized types in
@@ -26,7 +26,7 @@ module Numeric.LinearAlgebra.Static.Vector
 
 -- | Convert an <i>hmatrix</i> vector (parameterized by its lenth) to a
 --   <i>vector-sized</i> storable vector of <a>Double</a>s.
-rVec :: R n -> Vector n ℝ
+rVec :: KnownNat n => R n -> Vector n ℝ
 
 -- | Convert a <i>vector-sized</i> storable vector to an <i>hmatrix</i>
 --   vector (parameterized by its lenth).
@@ -35,7 +35,7 @@ vecR :: Vector n ℝ -> R n
 -- | Convert an <i>hmatrix</i> complex vector (parameterized by its lenth)
 --   to a <i>vector-sized</i> storable vector of 'Complex Double's,
 --   preserving the length in the type.
-cVec :: C n -> Vector n ℂ
+cVec :: KnownNat n => C n -> Vector n ℂ
 
 -- | Convert a <i>vector-sized</i> storable vector to an <i>hmatrix</i>
 --   complex vector (parameterized by its lenth), preserving the length in
@@ -45,24 +45,24 @@ vecC :: Vector n ℂ -> C n
 -- | Split an <i>hmatrix</i> matrix (parameterized by its dimensions) to a
 --   <i>vector-sized</i> boxed vector of its rows (as <i>hmatrix</i>
 --   vectors).
-lRows :: forall m n. () => L m n -> Vector m (R n)
+lRows :: forall m n. (KnownNat m, KnownNat n) => L m n -> Vector m (R n)
 
 -- | Join together a <i>vector-sized</i> boxed vector of <i>hmatrix</i>
 --   vectors to an <i>hmatrix</i> matrix as its rows.
-rowsL :: forall m n. () => Vector m (R n) -> L m n
+rowsL :: forall m n. KnownNat n => Vector m (R n) -> L m n
 
 -- | Split an <i>hmatrix</i> matrix (parameterized by its dimensions) to a
 --   <i>vector-sized</i> boxed vector of its columns (as <i>hmatrix</i>
 --   vectors).
-lCols :: forall m n. () => L m n -> Vector n (R m)
+lCols :: forall m n. (KnownNat m, KnownNat n) => L m n -> Vector n (R m)
 
 -- | Join together a <i>vector-sized</i> boxed vector of <i>hmatrix</i>
 --   vectors to an <i>hmatrix</i> matrix as its columns.
-colsL :: forall m n. () => Vector n (R m) -> L m n
+colsL :: forall m n. KnownNat m => Vector n (R m) -> L m n
 
 -- | Flatten an <i>hmatrix</i> matrix into a <i>vector-sized</i> storable
 --   vector of its items.
-lVec :: forall m n. () => L m n -> Vector (m * n) ℝ
+lVec :: forall m n. (KnownNat m, KnownNat n) => L m n -> Vector (m * n) ℝ
 
 -- | Shape a <i>vector-sized</i> storable vector of elements into an
 --   <i>hmatrix</i> matrix.
@@ -71,24 +71,24 @@ vecL :: forall m n. KnownNat n => Vector (m * n) ℝ -> L m n
 -- | Split an <i>hmatrix</i> complex matrix (parameterized by its
 --   dimensions) to a <i>vector-sized</i> boxed vector of its rows (as
 --   <i>hmatrix</i> complex vectors).
-mRows :: forall m n. () => M m n -> Vector m (C n)
+mRows :: forall m n. (KnownNat m, KnownNat n) => M m n -> Vector m (C n)
 
 -- | Join together a <i>vector-sized</i> boxed vector of <i>hmatrix</i>
 --   complex vectors to an <i>hmatrix</i> complex matrix as its rows.
-rowsM :: forall m n. () => Vector m (C n) -> M m n
+rowsM :: forall m n. KnownNat n => Vector m (C n) -> M m n
 
 -- | Split an <i>hmatrix</i> complex matrix (parameterized by its
 --   dimensions) to a <i>vector-sized</i> boxed vector of its columns (as
 --   <i>hmatrix</i> complex vectors).
-mCols :: forall m n. () => M m n -> Vector n (C m)
+mCols :: forall m n. (KnownNat m, KnownNat n) => M m n -> Vector n (C m)
 
 -- | Join together a <i>vector-sized</i> boxed vector of <i>hmatrix</i>
 --   complex vectors to an <i>hmatrix</i> complex matrix as its columns.
-colsM :: forall m n. () => Vector n (C m) -> M m n
+colsM :: forall m n. KnownNat m => Vector n (C m) -> M m n
 
 -- | Flatten an <i>hmatrix</i> complex matrix into a <i>vector-sized</i>
 --   storable vector of its items.
-mVec :: forall m n. () => M m n -> Vector (m * n) ℂ
+mVec :: forall m n. (KnownNat m, KnownNat n) => M m n -> Vector (m * n) ℂ
 
 -- | Shape a <i>vector-sized</i> storable vector of elements into an
 --   <i>hmatrix</i> complex matrix.
