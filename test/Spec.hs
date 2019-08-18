@@ -21,6 +21,8 @@ import           Hedgehog
 import           Numeric.Natural
 import           System.Exit
 import           System.IO
+import qualified Data.Vector.Generic                 as UVG
+import qualified Data.Vector.Generic.Sized           as VG
 import qualified Data.Vector.Sized                   as V
 import qualified Data.Vector.Storable.Sized          as VS
 import qualified Hedgehog.Gen                        as Gen
@@ -53,6 +55,12 @@ genComplex = (:+) <$> genDouble <*> genDouble
 sizeRange :: Num a => Range a
 sizeRange = Range.constant 5 10
 
+validVector
+    :: (UVG.Vector v a, KnownNat n, MonadTest m)
+    => VG.Vector v n a
+    -> m ()
+validVector v = VG.length v === UVG.length (VG.fromSized v)
+
 prop_rVec :: Property
 prop_rVec = property $ do
     xs <- forAll $ Gen.list sizeRange genDouble
@@ -66,9 +74,7 @@ prop_rVec_konst = property $ do
     x <- forAll genDouble
     SomeNat (Proxy :: Proxy n) <- fmap someNatVal' . forAll
                                 $ Gen.integral sizeRange
-    tripping (H.konst @_ @(H.R n) x)
-             (VS.map (* 2) . H.rVec)
-             (Identity . (/ 2) . H.vecR)
+    validVector . H.rVec @n $ H.konst x
 
 prop_vecR :: Property
 prop_vecR = property $ do
@@ -90,9 +96,7 @@ prop_cVec_konst = property $ do
     x <- forAll genComplex
     SomeNat (Proxy :: Proxy n) <- fmap someNatVal' . forAll
                                 $ Gen.integral sizeRange
-    tripping (H.konst @_ @(H.C n) x)
-             (VS.map (* 2) . H.cVec)
-             (Identity . (/ 2) . H.vecC)
+    validVector . H.cVec @n $ H.konst x
 
 prop_vecC :: Property
 prop_vecC = property $ do
@@ -111,6 +115,16 @@ genMatList g = do
            , xs
            )
 
+genMatKonst :: Gen a -> Gen (SomeNat, SomeNat, a)
+genMatKonst g = do
+    m <- Gen.integral sizeRange
+    n <- Gen.integral sizeRange
+    x <- g
+    return ( someNatVal' m
+           , someNatVal' n
+           , x
+           )
+
 prop_lRows :: Property
 prop_lRows = property $ do
     ( SomeNat (Proxy :: Proxy m)
@@ -121,6 +135,14 @@ prop_lRows = property $ do
              (V.map (* 2) . H.lRows @m @n)
              (Identity . (/ 2) . H.rowsL)
 
+prop_lRows_konst :: Property
+prop_lRows_konst = property $ do
+    ( SomeNat (Proxy :: Proxy m)
+     , SomeNat (Proxy :: Proxy n)
+     , x
+     ) <- forAll $ genMatKonst genDouble
+    validVector . H.lRows @m @n $ H.konst x
+
 prop_rowsL :: Property
 prop_rowsL = property $ do
     (_, SomeNat (Proxy :: Proxy n), xs)  <- forAll $ genMatList genDouble
@@ -128,6 +150,18 @@ prop_rowsL = property $ do
       tripping (V.map (fromJust . H.create . HU.fromList) v)
                ((* 2) . H.rowsL @m @n)
                (Identity . V.map (/ 2) . H.lRows)
+
+prop_rowsL_konst :: Property
+prop_rowsL_konst = property $ do
+    ( SomeNat (Proxy :: Proxy m)
+     , SomeNat (Proxy :: Proxy n)
+     , x
+     ) <- forAll $ genMatKonst genDouble
+    let rs = V.replicate $ H.konst x
+    validVector . H.lVec . H.rowsL @m @n $ rs
+    tripping rs
+        ((* 2) . H.rowsL @m @n)
+        (Identity . V.map (/ 2) . H.lRows)
 
 prop_lCols :: Property
 prop_lCols = property $ do
@@ -139,6 +173,14 @@ prop_lCols = property $ do
              (V.map (* 2) . H.lCols @m @n)
              (Identity . (/ 2) . H.colsL)
 
+prop_lCols_konst :: Property
+prop_lCols_konst = property $ do
+    ( SomeNat (Proxy :: Proxy m)
+     , SomeNat (Proxy :: Proxy n)
+     , x
+     ) <- forAll $ genMatKonst genDouble
+    validVector . H.lCols @m @n $ H.konst x
+
 prop_colsL :: Property
 prop_colsL = property $ do
     (_, SomeNat (Proxy :: Proxy m), xs)  <- forAll $ genMatList genDouble
@@ -146,6 +188,18 @@ prop_colsL = property $ do
       tripping (V.map (fromJust . H.create . HU.fromList) v)
                ((* 2) . H.colsL @m @n)
                (Identity . V.map (/ 2) . H.lCols)
+
+prop_colsL_konst :: Property
+prop_colsL_konst = property $ do
+    ( SomeNat (Proxy :: Proxy m)
+     , SomeNat (Proxy :: Proxy n)
+     , x
+     ) <- forAll $ genMatKonst genDouble
+    let cs = V.replicate $ H.konst x
+    validVector . H.lVec . H.colsL @m @n $ cs
+    tripping cs
+        ((* 2) . H.colsL @m @n)
+        (Identity . V.map (/ 2) . H.lCols)
 
 prop_vecL :: Property
 prop_vecL = property $ do
@@ -174,14 +228,11 @@ prop_lVec = property $ do
 
 prop_lVec_konst :: Property
 prop_lVec_konst = property $ do
-    x <- forAll genDouble
-    SomeNat (Proxy :: Proxy m) <- fmap someNatVal' . forAll
-                                $ Gen.integral sizeRange
-    SomeNat (Proxy :: Proxy n) <- fmap someNatVal' . forAll
-                                $ Gen.integral sizeRange
-    tripping (H.konst @_ @(H.L m n) x)
-             (VS.map (* 2) . H.lVec)
-             (Identity . (/ 2) . H.vecL)
+    ( SomeNat (Proxy :: Proxy m)
+     , SomeNat (Proxy :: Proxy n)
+     , x
+     ) <- forAll $ genMatKonst genDouble
+    validVector . H.lVec @m @n $ H.konst x
 
 prop_mRows :: Property
 prop_mRows = property $ do
@@ -193,6 +244,14 @@ prop_mRows = property $ do
              (V.map (* 2) . H.mRows @m @n)
              (Identity . (/ 2) . H.rowsM)
 
+prop_mRows_konst :: Property
+prop_mRows_konst = property $ do
+    ( SomeNat (Proxy :: Proxy m)
+     , SomeNat (Proxy :: Proxy n)
+     , x
+     ) <- forAll $ genMatKonst genComplex
+    validVector . H.mRows @m @n $ H.konst x
+
 prop_rowsM :: Property
 prop_rowsM = property $ do
     (_, SomeNat (Proxy :: Proxy n), xs)  <- forAll $ genMatList genComplex
@@ -200,6 +259,18 @@ prop_rowsM = property $ do
       tripping (V.map (fromJust . H.create . HU.fromList) v)
                ((* 2) . H.rowsM @m @n)
                (Identity . V.map (/ 2) . H.mRows)
+
+prop_rowsM_konst :: Property
+prop_rowsM_konst = property $ do
+    ( SomeNat (Proxy :: Proxy m)
+     , SomeNat (Proxy :: Proxy n)
+     , x
+     ) <- forAll $ genMatKonst genComplex
+    let rs = V.replicate $ H.konst x
+    validVector . H.mVec . H.rowsM @m @n $ rs
+    tripping rs
+        ((* 2) . H.rowsM @m @n)
+        (Identity . V.map (/ 2) . H.mRows)
 
 prop_mCols :: Property
 prop_mCols = property $ do
@@ -211,6 +282,14 @@ prop_mCols = property $ do
              (V.map (* 2) . H.mCols @m @n)
              (Identity . (/ 2) . H.colsM)
 
+prop_mCols_konst :: Property
+prop_mCols_konst = property $ do
+    ( SomeNat (Proxy :: Proxy m)
+     , SomeNat (Proxy :: Proxy n)
+     , x
+     ) <- forAll $ genMatKonst genComplex
+    validVector . H.mCols @m @n $ H.konst x
+
 prop_colsM :: Property
 prop_colsM = property $ do
     (_, SomeNat (Proxy :: Proxy m), xs)  <- forAll $ genMatList genComplex
@@ -218,6 +297,18 @@ prop_colsM = property $ do
       tripping (V.map (fromJust . H.create . HU.fromList) v)
                ((* 2) . H.colsM @m @n)
                (Identity . V.map (/ 2) . H.mCols)
+
+prop_colsM_konst :: Property
+prop_colsM_konst = property $ do
+    ( SomeNat (Proxy :: Proxy m)
+     , SomeNat (Proxy :: Proxy n)
+     , x
+     ) <- forAll $ genMatKonst genComplex
+    let cs = V.replicate $ H.konst x
+    validVector . H.mVec . H.colsM @m @n $ cs
+    tripping cs
+        ((* 2) . H.colsM @m @n)
+        (Identity . V.map (/ 2) . H.mCols)
 
 prop_vecM :: Property
 prop_vecM = property $ do
@@ -246,14 +337,11 @@ prop_mVec = property $ do
 
 prop_mVec_konst :: Property
 prop_mVec_konst = property $ do
-    x <- forAll genComplex
-    SomeNat (Proxy :: Proxy m) <- fmap someNatVal' . forAll
-                                $ Gen.integral sizeRange
-    SomeNat (Proxy :: Proxy n) <- fmap someNatVal' . forAll
-                                $ Gen.integral sizeRange
-    tripping (H.konst @_ @(H.M m n) x)
-             (VS.map (* 2) . H.mVec)
-             (Identity . (/ 2) . H.vecM)
+    ( SomeNat (Proxy :: Proxy m)
+     , SomeNat (Proxy :: Proxy n)
+     , x
+     ) <- forAll $ genMatKonst genComplex
+    validVector . H.mVec @m @n $ H.konst x
 
 
 main :: IO ()
