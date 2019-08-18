@@ -1,3 +1,5 @@
 .stack-work/
 hmatrix-vector-sized.cabal
 *~
+.ghc.environment.*
+dist-newstyle/
