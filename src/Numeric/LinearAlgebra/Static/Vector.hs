@@ -63,8 +63,8 @@ import qualified Numeric.LinearAlgebra.Static as H
 
 -- | Convert an /hmatrix/ vector (parameterized by its lenth) to
 -- a /vector-sized/ storable vector of 'Double's.
-rVec :: H.R n -> VS.Vector n H.ℝ
-rVec = unsafeCoerce
+rVec :: KnownNat n => H.R n -> VS.Vector n H.ℝ
+rVec = unsafeCoerce . H.extract
 
 -- | Convert a /vector-sized/ storable vector to an /hmatrix/ vector
 -- (parameterized by its lenth).
@@ -74,8 +74,8 @@ vecR = unsafeCoerce
 -- | Convert an /hmatrix/ complex vector (parameterized by its lenth) to
 -- a /vector-sized/ storable vector of 'Complex Double's, preserving the
 -- length in the type.
-cVec :: H.C n -> VS.Vector n H.ℂ
-cVec = unsafeCoerce
+cVec :: KnownNat n => H.C n -> VS.Vector n H.ℂ
+cVec = unsafeCoerce . H.extract
 
 -- | Convert a /vector-sized/ storable vector to an /hmatrix/ complex
 -- vector (parameterized by its lenth), preserving the length in the type.
@@ -85,91 +85,91 @@ vecC = unsafeCoerce
 -- | Split an /hmatrix/ matrix (parameterized by its dimensions) to
 -- a /vector-sized/ boxed vector of its rows (as /hmatrix/ vectors).
 lRows
-    :: forall m n. ()
+    :: forall m n. (KnownNat m, KnownNat n)
     => H.L m n
     -> V.Vector m (H.R n)
 lRows = unsafeCoerce
       . UV.fromList
       . HU.toRows
-      . (unsafeCoerce :: H.L m n -> HU.Matrix Double)
+      . H.extract
 
 -- | Join together a /vector-sized/ boxed vector of /hmatrix/ vectors to an
 -- /hmatrix/ matrix as its rows.
 rowsL
-    :: forall m n. ()
+    :: forall m n. KnownNat n
     => V.Vector m (H.R n)
     -> H.L m n
 rowsL = (unsafeCoerce :: HU.Matrix Double -> H.L m n)
       . HU.fromRows
-      . (unsafeCoerce :: [H.R n] -> [HU.Vector Double])
+      . map H.extract
       . toList
 
 -- | Split an /hmatrix/ matrix (parameterized by its dimensions) to
 -- a /vector-sized/ boxed vector of its columns (as /hmatrix/ vectors).
 lCols
-    :: forall m n. ()
+    :: forall m n. (KnownNat m, KnownNat n)
     => H.L m n
     -> V.Vector n (H.R m)
 lCols = unsafeCoerce
       . UV.fromList
       . HU.toColumns
-      . (unsafeCoerce :: H.L m n -> HU.Matrix Double)
+      . H.extract
 
 -- | Join together a /vector-sized/ boxed vector of /hmatrix/ vectors to an
 -- /hmatrix/ matrix as its columns.
 colsL
-    :: forall m n. ()
+    :: forall m n. KnownNat m
     => V.Vector n (H.R m)
     -> H.L m n
 colsL = (unsafeCoerce :: HU.Matrix Double -> H.L m n)
       . HU.fromColumns
-      . (unsafeCoerce :: [H.R m] -> [HU.Vector Double])
+      . map H.extract
       . toList
 
 -- | Split an /hmatrix/ complex matrix (parameterized by its dimensions) to
 -- a /vector-sized/ boxed vector of its rows (as /hmatrix/ complex
 -- vectors).
 mRows
-    :: forall m n. ()
+    :: forall m n. (KnownNat m, KnownNat n)
     => H.M m n
     -> V.Vector m (H.C n)
 mRows = unsafeCoerce
       . UV.fromList
       . HU.toRows
-      . (unsafeCoerce :: H.M m n -> HU.Matrix H.ℂ)
+      . H.extract
 
 -- | Join together a /vector-sized/ boxed vector of /hmatrix/ complex
 -- vectors to an /hmatrix/ complex matrix as its rows.
 rowsM
-    :: forall m n. ()
+    :: forall m n. KnownNat n
     => V.Vector m (H.C n)
     -> H.M m n
 rowsM = (unsafeCoerce :: HU.Matrix H.ℂ -> H.M m n)
       . HU.fromRows
-      . (unsafeCoerce :: [H.C n] -> [HU.Vector H.ℂ])
+      . map H.extract
       . toList
 
 -- | Split an /hmatrix/ complex matrix (parameterized by its dimensions) to
 -- a /vector-sized/ boxed vector of its columns (as /hmatrix/ complex
 -- vectors).
 mCols
-    :: forall m n. ()
+    :: forall m n. (KnownNat m, KnownNat n)
     => H.M m n
     -> V.Vector n (H.C m)
 mCols = unsafeCoerce
       . UV.fromList
       . HU.toColumns
-      . (unsafeCoerce :: H.M m n -> HU.Matrix H.ℂ)
+      . H.extract
 
 -- | Join together a /vector-sized/ boxed vector of /hmatrix/ complex
 -- vectors to an /hmatrix/ complex matrix as its columns.
 colsM
-    :: forall m n. ()
+    :: forall m n. KnownNat m
     => V.Vector n (H.C m)
     -> H.M m n
 colsM = (unsafeCoerce :: HU.Matrix H.ℂ -> H.M m n)
       . HU.fromColumns
-      . (unsafeCoerce :: [H.C m] -> [HU.Vector H.ℂ])
+      . map H.extract
       . toList
 
 -- | Shape a /vector-sized/ storable vector of elements into an /hmatrix/
@@ -189,12 +189,12 @@ vecL = (unsafeCoerce :: HU.Matrix H.ℝ -> H.L m n)
 --
 -- @since 0.1.1.0
 lVec
-    :: forall m n. ()
+    :: forall m n. (KnownNat m, KnownNat n)
     => H.L m n
     -> VS.Vector (m * n) H.ℝ
 lVec = unsafeCoerce
      . HU.flatten
-     . (unsafeCoerce :: H.L m n -> HU.Matrix H.ℝ)
+     . H.extract
 
 -- | Shape a /vector-sized/ storable vector of elements into an /hmatrix/
 -- complex matrix.
@@ -213,10 +213,10 @@ vecM = (unsafeCoerce :: HU.Matrix H.ℂ -> H.M m n)
 --
 -- @since 0.1.1.0
 mVec
-    :: forall m n. ()
+    :: forall m n. (KnownNat m, KnownNat n)
     => H.M m n
     -> VS.Vector (m * n) H.ℂ
 mVec = unsafeCoerce
      . HU.flatten
-     . (unsafeCoerce :: H.M m n -> HU.Matrix H.ℂ)
+     . H.extract
 
