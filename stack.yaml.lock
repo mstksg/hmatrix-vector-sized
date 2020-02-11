@@ -19,10 +19,10 @@ packages:
   original:
     hackage: finite-typelits-0.1.4.2
 - completed:
-    hackage: indexed-list-literals-0.2.1.2@sha256:0760e2a86605b5557af7180d4d50e317d75a5a92ca12aaabb6948ce97b7a94ac,2373
+    hackage: indexed-list-literals-0.2.1.2@sha256:8cca1b63332948ced0cd48d776b103add06de0180d153d60dd69945105af10a5,2464
     pantry-tree:
       size: 341
-      sha256: 4e54f8d033a1f46333274ea3d1b9785c9e4fd225dcddc988c7a41353d9959cd5
+      sha256: d1890c0ebaaacacd9ec849ed16bc29182314159745658c8c719b6ed684617c68
   original:
     hackage: indexed-list-literals-0.2.1.2
 snapshots:

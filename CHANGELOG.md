@@ -1,6 +1,31 @@
 Changelog
 =========
 
+Version 0.1.3.0
+---------------
+
+*February 11, 2020*
+
+<https://github.com/mstksg/hmatrix-vector-sized/releases/tag/v0.1.3.0>
+
+*   Added "generic" versions of vector conversions, to cover the common use
+    cases involving conversion to and from non-storable vectors.  This
+    includes:
+
+    *   `grVec`
+    *   `gvecR`
+    *   `gcVec`
+    *   `gvecC`
+    *   `glVec`
+    *   `gvecL`
+    *   `gmVec`
+    *   `gvecM`
+
+    Rewrite rules are included so that you can use these with storable vectors
+    without any cost, but don't rely on those.
+
+*   Added big-O analysis to documentation for all functions.
+
 Version 0.1.2.0
 ---------------
 
