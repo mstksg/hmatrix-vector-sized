@@ -3,31 +3,10 @@
 # For more information, please see the documentation at:
 #   https://docs.haskellstack.org/en/stable/lock_files
 
-packages:
-- completed:
-    hackage: vector-sized-1.1.1.0@sha256:69330ec110ede86ed264ff92de4d184c7cfd320a2a453edd1b535ffe68213d2b,1754
-    pantry-tree:
-      size: 1039
-      sha256: b48a0f4d2ce0d9665d18319041bba98652b47435daac03c3398011292a486894
-  original:
-    hackage: vector-sized-1.1.1.0
-- completed:
-    hackage: finite-typelits-0.1.4.2@sha256:d243523297c0526d32e9b7de98e04b79a4227577ddb25d3fecd7981439de243c,720
-    pantry-tree:
-      size: 285
-      sha256: a893d5f2acc17ea0b1f51dbad3eb1d206bed9d041b66284551b3ee3166595a4f
-  original:
-    hackage: finite-typelits-0.1.4.2
-- completed:
-    hackage: indexed-list-literals-0.2.1.2@sha256:8cca1b63332948ced0cd48d776b103add06de0180d153d60dd69945105af10a5,2464
-    pantry-tree:
-      size: 341
-      sha256: d1890c0ebaaacacd9ec849ed16bc29182314159745658c8c719b6ed684617c68
-  original:
-    hackage: indexed-list-literals-0.2.1.2
+packages: []
 snapshots:
 - completed:
-    size: 513872
-    url: https://raw.githubusercontent.com/commercialhaskell/stackage-snapshots/master/nightly/2019/6/28.yaml
-    sha256: 60d99bc77de2ab71baaf7114873210155f84e8ae78350f113a1e6307a6b1995c
-  original: nightly-2019-06-28
+    size: 504398
+    url: https://raw.githubusercontent.com/commercialhaskell/stackage-snapshots/master/nightly/2019/2/11.yaml
+    sha256: 3f5e294567a2d33ddb6918446798830e128dc4cafb96119f29de91ac6bf94f22
+  original: nightly-2019-02-11
